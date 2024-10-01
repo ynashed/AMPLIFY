@@ -200,7 +200,7 @@ class AMPLIFY(AMPLIFYPreTrainedModel):
 
         self.decoder = nn.Linear(config.hidden_size, config.vocab_size)
 
-        self.freqs_cis = precompute_freqs_cis(config.hidden_size // config.num_attention_heads, config.max_length)
+        self.freqs_cis = precompute_freqs_cis(config.hidden_size // config.num_attention_heads, config.max_length, config.rope_theta)
         
         # Initialize weights and apply final processing
         self.post_init()
