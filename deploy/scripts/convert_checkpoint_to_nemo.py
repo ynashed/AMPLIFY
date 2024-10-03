@@ -94,10 +94,9 @@ def load_config(args, amplify_config):
     nemo_config.max_position_embeddings = amplify_config['max_length']
     nemo_config.init_method_std = amplify_config['decoder_init_range']
     nemo_config.layernorm_epsilon = amplify_config['norm_eps']
-    if 'num_key_value_heads' in amplify_config:
-        nemo_config.num_query_groups = amplify_config['num_key_value_heads']
+    nemo_config.num_query_groups = amplify_config['num_attention_heads'] #regular multi-head attention. No MQA or GQA
     nemo_config.use_cpu_initialization = True
-    nemo_config.activation = amplify_config['hidden_act']
+    nemo_config.activation = 'fast-swiglu' #amplify_config['hidden_act']
 
     # Tokenizer config
     if 'vocab_path' in amplify_config:
@@ -184,7 +183,7 @@ def convert(args):
     checkpoint = OrderedDict()
     checkpoint['state_dict'] = OrderedDict()
 
-    embed_weight = model.state_dict()[f'model.encoder.weight']
+    embed_weight = model.state_dict()[f'encoder.weight']
     if mcore_gpt:
         embed_weights_base_name = f'model.embedding.word_embeddings.weight'
     else:
